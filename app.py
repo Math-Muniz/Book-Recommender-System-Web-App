@@ -18,6 +18,7 @@ def index():
                             votes = list(popular_df['num_ratings'].values),
                             rating = list(popular_df['avg_ratings'].values)
                             )
+
 @app.route('/recommend')
 def recommend_ui():
     return render_template('recommend.html')
@@ -26,7 +27,7 @@ def recommend_ui():
 def recommend():
     user_input = request.form.get('user_input')
     index = np.where(pt.index == user_input)[0][0]
-    similar_items = sorted(list(enumerate(similarity_scores[index])), key=lambda x: x[1], reverse=True)[1:5]
+    similar_items = sorted(list(enumerate(similarity_scores[index])), key=lambda x: x[1], reverse=True)[1:9]
 
     data = []
     for i in similar_items:
@@ -41,6 +42,10 @@ def recommend():
     print(data)
 
     return render_template('recommend.html',data=data)
+
+@app.route('/about')
+def contact_ui():
+    return render_template('about.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
