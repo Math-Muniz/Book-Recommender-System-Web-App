@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import pickle
 import numpy as np
 
@@ -26,7 +26,11 @@ def recommend_ui():
 @app.route('/recommend_books',methods=['post'])
 def recommend():
     user_input = request.form.get('user_input')
-    index = np.where(pt.index == user_input)[0][0]
+    try:
+        index = np.where(pt.index == user_input)[0][0]
+    except IndexError:
+        return redirect(url_for('not_found'))
+
     similar_items = sorted(list(enumerate(similarity_scores[index])), key=lambda x: x[1], reverse=True)[1:9]
 
     data = []
@@ -42,6 +46,10 @@ def recommend():
     print(data)
 
     return render_template('recommend.html',data=data)
+
+@app.route('/not_found')
+def not_found():
+    return render_template('not_found.html')
 
 @app.route('/about')
 def contact_ui():
